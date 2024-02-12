@@ -85,13 +85,16 @@ void SerialMonitor::connectSerial()
 
 void SerialMonitor::disconnectSerial()
 {
-    ui->statusLine->setText("Disconnected");
-    disconnect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
+    if ( serial != nullptr )
+    {
+        ui->statusLine->setText("Disconnected");
+        disconnect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
                SLOT(handleError(QSerialPort::SerialPortError)));
-    disconnect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
-    serial->close();
-    delete serial;
-    serial = nullptr;
+        disconnect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+        serial->close();
+        delete serial;
+        serial = nullptr;
+    }
 }
 
 void SerialMonitor::sendData()
