@@ -49,6 +49,7 @@ SerialMonitor::SerialMonitor(QWidget *parent) :
     ui->statusLine->setText("Disconnected");
     connect(ui->clearButton, SIGNAL(clicked(bool)), this, SLOT(clearReceive()));
     connect(ui->comListButton, SIGNAL(clicked(bool)), this, SLOT(identifyPorts()));
+    connect(ui->boudRate, SIGNAL(currentIndexChanged(int)), this, SLOT(changedBoudRate(int)));
 }
 
 SerialMonitor::~SerialMonitor()
@@ -66,8 +67,11 @@ void SerialMonitor::connectSerial()
     {
         delete serial;
     }
+    QString portName = ui->comPorts->currentText();
+    if ( portName.isEmpty() )
+        return;
     serial = new QSerialPort(this);
-    serial->setPortName(ui->comPort->text());
+    serial->setPortName(portName);
     serial->setBaudRate(ui->boudRate->currentText().toInt());
     serial->setDataBits(QSerialPort::Data8);
     serial->setParity(QSerialPort::NoParity);
@@ -81,6 +85,7 @@ void SerialMonitor::connectSerial()
         serial->setDataTerminalReady(true);
         ui->statusLine->setText("Connected");
     }
+    ui->connectButton->clearFocus();
 }
 
 void SerialMonitor::disconnectSerial()
@@ -95,6 +100,7 @@ void SerialMonitor::disconnectSerial()
         delete serial;
         serial = nullptr;
     }
+    ui->disconnectButton->clearFocus();
 }
 
 void SerialMonitor::sendData()
@@ -152,11 +158,13 @@ void SerialMonitor::readData()
 void SerialMonitor::clearReceive()
 {
     ui->receiveTexts->clear();
+    ui->clearButton->clearFocus();
     QMainWindow::repaint();
 }
 
 void SerialMonitor::identifyPorts()
 {
+    ui->comPorts->clear();
     foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
     {
         QString infoData = QObject::tr("Port: ") + info.portName() + "\n"
@@ -168,6 +176,16 @@ void SerialMonitor::identifyPorts()
                     + "-------------------------------------------\n";
         ui->receiveTexts->moveCursor(QTextCursor::End);
         ui->receiveTexts->insertPlainText(infoData);
+        ui->comPorts->addItem(info.portName());
     }
+    ui->comListButton->clearFocus();
     QMainWindow::repaint();
+}
+
+void SerialMonitor::changedBoudRate(int index)
+{
+    if ( serial != nullptr && serial->isOpen() )
+    {
+        serial->setBaudRate(ui->boudRate->currentText().toInt());
+    }
 }

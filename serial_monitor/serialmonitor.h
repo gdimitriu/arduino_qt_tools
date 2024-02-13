@@ -46,6 +46,7 @@ private slots:
     void readData();
     void clearReceive();
     void identifyPorts();
+    void changedBoudRate(int index);
 private:
     Ui::SerialMonitor *ui;
     enum LINE_TERMINATION { NONE, LF, CR, LF_CR};
