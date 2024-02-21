@@ -135,6 +135,7 @@ void SerialMonitor::sendData()
         serial->write(ui->serialSendMessage->text().toLatin1());
     }
     serial->flush();
+    ui->sendButton->clearFocus();
 }
 
 void SerialMonitor::handleError(QSerialPort::SerialPortError error)
@@ -152,7 +153,6 @@ void SerialMonitor::readData()
     ui->receiveTexts->insertPlainText(readData);
     serial->flush();
     QMainWindow::repaint();
-    ui->sendButton->clearFocus();
 }
 
 void SerialMonitor::clearReceive()

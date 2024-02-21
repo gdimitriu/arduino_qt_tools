@@ -35,15 +35,18 @@ unsigned int readWriteBufferLen = 512;
 
 byte readByte_EEPROM(int deviceAddress, unsigned int address)
 {
-  byte rdata = 0xFF;
+  char rdata = 0xFF;
   Wire.beginTransmission(deviceAddress);
-  Wire.write((int) (address >>8)); //MSB
-  Wire.write((int) (address & 0xFF)); //LSB
+//  Wire.write((int) (address >>8)); //MSB
+//  Wire.write((int) (address & 0xFF)); //LSB
+  Wire.write(address);
   Wire.endTransmission();
   Wire.requestFrom(deviceAddress, 1);
-  if (Wire.available()) {
-    rdata = Wire.read();
+  while (!Wire.available()) {
+    
   }
+  rdata = Wire.read();
+  Wire.endTransmission();
   return rdata;
 }
 
@@ -51,8 +54,9 @@ void writeByte_EEPROM(int deviceAddress, unsigned int address, byte data)
 {
   int rdata  = data;
   Wire.beginTransmission(deviceAddress);
-  Wire.write((int) (address >> 8)); //MSB
-  Wire.write((int) (address & 0xFF)); //LSB
+//  Wire.write((int) (address >> 8)); //MSB
+//  Wire.write((int) (address & 0xFF)); //LSB
+  Wire.write(address);
   Wire.write(rdata);
   Wire.endTransmission();
 }
@@ -60,22 +64,26 @@ void writeByte_EEPROM(int deviceAddress, unsigned int address, byte data)
 void readBytes_EEPROM(int deviceAddress, unsigned int address, byte * buffer, int length)
 {  
   Wire.beginTransmission(deviceAddress);
-  Wire.write((int)(address >> 8)); //MSB
-  Wire.write((int) (address & 0xFF)); //LSB
+//  Wire.write((int)(address >> 8)); //MSB
+//  Wire.write((int) (address & 0xFF)); //LSB
+  Wire.write(address);
   Wire.endTransmission();
   Wire.requestFrom(deviceAddress, length);
   for(int idx = 0; idx < length; idx++) {
-    if (Wire.available()) {
-      buffer[idx] = Wire.read();
+    while (!Wire.available()) {
+      
     }
+    buffer[idx] = Wire.read();
   }
+  Wire.endTransmission();
 }
 
 void writeBytes_EEPROM(int deviceAddress, unsigned int address, byte *data, int length)
 {
   Wire.beginTransmission(deviceAddress);
-  Wire.write((int) (address >> 8)); //MSB
-  Wire.write((int) (address & 0xFF)); //LSB
+//  Wire.write((int) (address >> 8)); //MSB
+//  Wire.write((int) (address & 0xFF)); //LSB
+  Wire.write(address);
   for(int idx = 0; idx < length; idx++) {
     Wire.write(data[idx]);
   }
@@ -147,7 +155,7 @@ void processCommand() {
       }
       int address = strtol(buf, 0, 16);
       byte value = readByte_EEPROM(deviceAddress, address);
-      Serial.write(&value, sizeof(byte));
+      Serial.print(value);
       Serial.flush();
     }
     //write one byte
