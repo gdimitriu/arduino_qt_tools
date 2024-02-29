@@ -33,7 +33,7 @@ SerialMonitor::SerialMonitor(QWidget *parent) :
     ui->lineTermination->addItem("None", LINE_TERMINATION::NONE);
     ui->lineTermination->addItem("LF", LINE_TERMINATION::LF);
     ui->lineTermination->addItem("CR", LINE_TERMINATION::CR);
-    ui->lineTermination->addItem("LF&CR", LINE_TERMINATION::LF_CR);
+    ui->lineTermination->addItem("CR&LF", LINE_TERMINATION::CR_LF);
     //setup boud rate
     ui->boudRate->addItem("2400");
     ui->boudRate->addItem("4800");
@@ -126,9 +126,9 @@ void SerialMonitor::sendData()
         str.append('\r');
         serial->write(str.toLatin1());
         break;
-    case LINE_TERMINATION::LF_CR :
+    case LINE_TERMINATION::CR_LF :
         str = ui->serialSendMessage->text();
-        str.append("\n\r");
+        str.append("\r\n");
         serial->write(str.toLatin1());
         break;
     default:

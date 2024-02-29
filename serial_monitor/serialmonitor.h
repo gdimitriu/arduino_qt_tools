@@ -49,7 +49,7 @@ private slots:
     void changedBoudRate(int index);
 private:
     Ui::SerialMonitor *ui;
-    enum LINE_TERMINATION { NONE, LF, CR, LF_CR};
+    enum LINE_TERMINATION { NONE, LF, CR, CR_LF};
     QSerialPort *serial;
 };
 
