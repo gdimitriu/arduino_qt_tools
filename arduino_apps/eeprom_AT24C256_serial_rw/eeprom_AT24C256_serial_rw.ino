@@ -69,10 +69,10 @@ void readBytes_EEPROM(int deviceAddress, unsigned int address, byte * buffer, in
   Wire.write(address);
   Wire.endTransmission();
   Wire.requestFrom(deviceAddress, length);
-  for(int idx = 0; idx < length; idx++) {
-    while (!Wire.available()) {
-      
-    }
+  while (!Wire.available());
+  int realLength = Wire.available();
+  for(int idx = 0; idx < realLength; idx++) {
+    while (!Wire.available());
     buffer[idx] = Wire.read();
   }
   Wire.endTransmission();

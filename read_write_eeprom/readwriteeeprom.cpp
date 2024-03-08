@@ -35,11 +35,13 @@ ReadWriteEEPROM::ReadWriteEEPROM(QWidget *parent) :
     createMenus();
     setupComs();
     setupEproms();
-    dumpFile = nullptr;
 }
 
 ReadWriteEEPROM::~ReadWriteEEPROM()
 {
+    if ( outFile.is_open() ) {
+        outFile.close();
+    }
     delete ui;
 }
 
@@ -200,6 +202,9 @@ void ReadWriteEEPROM::disconnectSerial()
         serial = nullptr;
     }
     ui->disconnectButton->clearFocus();
+    if ( outFile.is_open() ) {
+        outFile.close();
+    }
 }
 
 
@@ -278,12 +283,10 @@ void ReadWriteEEPROM::sendReadCommand()
     }
     if ( !ui->outFileName->text().isEmpty() )
     {
-        if ( dumpFile != nullptr )
-        {
-            dumpFile->close();
-            delete dumpFile;
+        if ( outFile.is_open() ) {
+            outFile.close();
         }
-        dumpFile = new QFile(ui->outFileName->text(), this);
+        outFile.open(ui->outFileName->text().toStdString().c_str(), std::ios::trunc);
     }
     switch ( ui->lineTermination->currentData().toInt() )
     {
@@ -314,6 +317,11 @@ void ReadWriteEEPROM::readDataToViewOrDump()
     ui->readWriteView->moveCursor(QTextCursor::End);
     ui->readWriteView->insertPlainText(readData);
     serial->flush();
+    if ( outFile.is_open() )
+    {
+        outFile<<readData.toLatin1().toStdString();
+        outFile.flush();
+    }
     QMainWindow::repaint();
 }
 

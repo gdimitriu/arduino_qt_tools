@@ -27,7 +27,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QSerialPort>
-#include <QFile>
+#include <fstream>
 
 namespace Ui {
 class ReadWriteEEPROM;
@@ -68,7 +68,7 @@ private:
     void setupCommComboBoxDefault();
     Ui::ReadWriteEEPROM *ui;
     QSerialPort *serial;
-    QFile *dumpFile;
+    std::ofstream outFile;
     unsigned char getByteFromString(QString str);
     void sendCommand(QString command);
     void sendWriteMultiple(QString deviceAddress, long address, long length, long startPos);
