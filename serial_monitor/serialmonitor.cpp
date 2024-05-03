@@ -50,6 +50,7 @@ SerialMonitor::SerialMonitor(QWidget *parent) :
     connect(ui->clearButton, SIGNAL(clicked(bool)), this, SLOT(clearReceive()));
     connect(ui->comListButton, SIGNAL(clicked(bool)), this, SLOT(identifyPorts()));
     connect(ui->boudRate, SIGNAL(currentIndexChanged(int)), this, SLOT(changedBoudRate(int)));
+    connect(ui->serialSendMessage, SIGNAL(returnPressed()), this, SLOT(sendData()));
 }
 
 SerialMonitor::~SerialMonitor()
